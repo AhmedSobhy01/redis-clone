@@ -1,0 +1,145 @@
+#include "ResizableHashTable.h"
+
+#include <vector>
+#include <cassert>
+
+ResizableHashTable::ResizableHashTable(size_t initialSlots) : _older(nullptr), _migratePos(0)
+{
+  _newer = std::make_unique<HashTable>(initialSlots);
+}
+
+ResizableHashTable::~ResizableHashTable()
+{
+}
+
+bool ResizableHashTable::get(const std::string &key, std::string &out)
+{
+  // check new table first
+  if (_newer->get(key, out))
+    return true;
+
+  // check old table if still rehashing
+  if (isRehashing())
+  {
+    bool result = _older->get(key, out);
+    tryRehashing();
+    return result;
+  }
+
+  return false;
+}
+
+void ResizableHashTable::set(const std::string &key, std::string value)
+{
+  _newer->set(key, std::move(value));
+
+  // delete from old table
+  if (isRehashing())
+  {
+    _older->del(key);
+    tryRehashing();
+  }
+  else
+  {
+    // check if rehashing is needed
+    if (_newer->size() > kMaxLoadFactor * _newer->_slots.size())
+      triggerRehashing();
+  }
+}
+
+bool ResizableHashTable::del(const std::string &key)
+{
+  // try new table first
+  if (_newer->del(key))
+  {
+    if (isRehashing())
+      tryRehashing();
+
+    return true;
+  }
+
+  // try old table
+  if (isRehashing())
+  {
+    bool result = _older->del(key);
+    tryRehashing();
+    return result;
+  }
+
+  return false;
+}
+
+size_t ResizableHashTable::size() const
+{
+  return _newer->size() + (isRehashing() ? _older->size() : 0);
+}
+
+void ResizableHashTable::clear()
+{
+  _newer->clear();
+  _older.reset();
+
+  _migratePos = 0;
+}
+
+void ResizableHashTable::tryRehashing()
+{
+  assert(isRehashing() && "Not rehashing, cannot migrate keys");
+
+  migrateKeys();
+
+  // we are done
+  if (_older->size() == 0)
+  {
+    _older.reset();
+    _migratePos = 0;
+  }
+}
+
+void ResizableHashTable::triggerRehashing()
+{
+  assert(!isRehashing());
+
+  _older = std::move(_newer);
+  _migratePos = 0;
+
+  _newer = std::make_unique<HashTable>(_older->_slots.size() << 1); // double the size
+  tryRehashing();
+}
+
+bool ResizableHashTable::isRehashing() const
+{
+  return _older != nullptr && _migratePos < _older->_slots.size();
+}
+
+void ResizableHashTable::migrateKeys()
+{
+  assert(isRehashing() && "Not rehashing, cannot migrate keys");
+
+  size_t migrated = 0;
+  while (migrated < kRehashingWorkSize && _older->size() > 0)
+  {
+    // find a filled slot
+    while (_migratePos < _older->_slots.size() && _older->_slots[_migratePos] == nullptr)
+      _migratePos++;
+
+    if (_migratePos >= _older->_slots.size())
+      break;
+
+    HashTable::Entry *entry = _older->_slots[_migratePos];
+    if (!entry)
+      break;
+
+    _older->_slots[_migratePos] = entry->next;
+    entry->next = nullptr;
+    _older->_size--;
+
+    // insert into the new table
+    size_t idx = entry->hashCode & _newer->_mask;
+    entry->next = _newer->_slots[idx];
+    _newer->_slots[idx] = entry;
+    _newer->_size++;
+
+    migrated++;
+  }
+}

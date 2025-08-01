@@ -1,0 +1,12 @@
+.vscode/
+*.o
+obj/
+*.exe
+*.out
+*.log
+*.tmp
+*.bak
+build/
+CMakeCache.txt
+CMakeFiles/
+redis-clone
