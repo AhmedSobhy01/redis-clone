@@ -1,4 +1,4 @@
-#include "DelCommand.h"
+#include "command/DelCommand.h"
 
 DelCommand::DelCommand(std::string key) : _key(std::move(key))
 {

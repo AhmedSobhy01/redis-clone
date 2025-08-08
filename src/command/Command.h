@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../containers/IDatabase.h"
-#include "../protocol/Response.h"
+#include "containers/IDatabase.h"
+#include "protocol/Response.h"
 
 class Command
 {

@@ -1,7 +1,7 @@
-#include "CommandFactory.h"
-#include "GetCommand.h"
-#include "SetCommand.h"
-#include "DelCommand.h"
+#include "command/CommandFactory.h"
+#include "command/GetCommand.h"
+#include "command/SetCommand.h"
+#include "command/DelCommand.h"
 
 std::unique_ptr<Command> CommandFactory::create(const Request &req)
 {

@@ -1,4 +1,4 @@
-#include "ResizableHashTable.h"
+#include "containers/ResizableHashTable.h"
 
 #include <vector>
 #include <cassert>

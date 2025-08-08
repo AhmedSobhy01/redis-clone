@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ByteBuffer.h"
-#include "Request.h"
-#include "Response.h"
+#include "protocol/ByteBuffer.h"
+#include "protocol/Request.h"
+#include "protocol/Response.h"
 
 #include <memory>
 

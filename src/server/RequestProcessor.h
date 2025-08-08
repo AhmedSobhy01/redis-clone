@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../containers/IDatabase.h"
-#include "../network/Connection.h"
-#include "../protocol/ProtocolHelper.h"
+#include "containers/IDatabase.h"
+#include "network/Connection.h"
+#include "protocol/ProtocolHelper.h"
 
 const size_t kMaxRequestsPerConnection = 100;
 

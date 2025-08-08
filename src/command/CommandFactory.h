@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../protocol/Request.h"
-#include "Command.h"
+#include "protocol/Request.h"
+#include "command/Command.h"
 #include <memory>
 
 class CommandFactory

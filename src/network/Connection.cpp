@@ -1,4 +1,4 @@
-#include "Connection.h"
+#include "network/Connection.h"
 
 #include <fcntl.h>
 #include <unistd.h>

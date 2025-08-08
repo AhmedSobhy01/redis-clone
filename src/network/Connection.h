@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../protocol/ByteBuffer.h"
+#include "protocol/ByteBuffer.h"
 
 #include <functional>
 #include <chrono>

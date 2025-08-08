@@ -1,4 +1,4 @@
-#include "ByteBuffer.h"
+#include "protocol/ByteBuffer.h"
 
 #include <algorithm>
 

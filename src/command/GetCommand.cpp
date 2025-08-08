@@ -1,4 +1,5 @@
-#include "GetCommand.h"
+#include "command/GetCommand.h"
+
 #include <cstring>
 
 GetCommand::GetCommand(std::string key) : _key(std::move(key))

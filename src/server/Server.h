@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../network/EventLoop.h"
-#include "../network/ConnectionManager.h"
-#include "../containers/IDatabase.h"
-#include "RequestProcessor.h"
+#include "network/EventLoop.h"
+#include "network/ConnectionManager.h"
+#include "containers/IDatabase.h"
+#include "server/RequestProcessor.h"
 
 #include <memory>
 #include <chrono>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Connection.h"
+#include "network/Connection.h"
 
 #include <vector>
 #include <memory>

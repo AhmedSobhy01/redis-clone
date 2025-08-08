@@ -1,5 +1,5 @@
-#include "RequestProcessor.h"
-#include "../command/CommandFactory.h"
+#include "server/RequestProcessor.h"
+#include "command/CommandFactory.h"
 
 #include <iostream>
 

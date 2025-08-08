@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Command.h"
+#include "command/Command.h"
 #include <string>
 
 class SetCommand : public Command

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ConnectionManager.h"
-#include "Listener.h"
+#include "network/ConnectionManager.h"
+#include "network/Listener.h"
 
 #include <memory>
 #include <string>
