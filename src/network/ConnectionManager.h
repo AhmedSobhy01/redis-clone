@@ -22,4 +22,6 @@ public:
 private:
   std::vector<std::unique_ptr<Connection>> _connections;
   size_t _activeConnections;
+
+  size_t getSystemMaxFD() const;
 };

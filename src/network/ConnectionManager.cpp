@@ -2,10 +2,11 @@
 
 #include <unistd.h>
 #include <algorithm>
+#include <sys/resource.h>
 
 ConnectionManager::ConnectionManager() : _activeConnections(0)
 {
-  _connections.reserve(1024);
+  _connections.reserve(getSystemMaxFD());
 }
 
 ConnectionManager::~ConnectionManager()
@@ -70,4 +71,13 @@ Connection *ConnectionManager::getConnection(int fd)
     return _connections[fd].get();
 
   return nullptr;
+}
+
+size_t ConnectionManager::getSystemMaxFD() const
+{
+  struct rlimit rl;
+  if (getrlimit(RLIMIT_NOFILE, &rl) == 0)
+    return std::min(rl.rlim_cur, (size_t)65536); // limit it to 65536
+
+  return 1024;
 }

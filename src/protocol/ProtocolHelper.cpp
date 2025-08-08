@@ -54,8 +54,7 @@ std::vector<uint8_t> ProtocolHelper::serialize(const Response &resp)
   if (total > kMaxMsg)
     throw std::runtime_error("response too big");
 
-  std::vector<uint8_t> out;
-  out.resize(4 + total);
+  std::vector<uint8_t> out(4 + total);
   uint8_t *p = out.data();
 
   // total length
