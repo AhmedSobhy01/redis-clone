@@ -42,7 +42,7 @@ void ResizableHashTable::set(const std::string &key, std::string value)
   else
   {
     // check if rehashing is needed
-    if (_newer->size() > kMaxLoadFactor * _newer->_slots.size())
+    if (_newer->size() > kMaxLoadFactor * _newer->capacity())
       triggerRehashing();
   }
 }
@@ -74,6 +74,11 @@ size_t ResizableHashTable::size() const
   return _newer->size() + (isRehashing() ? _older->size() : 0);
 }
 
+size_t ResizableHashTable::capacity() const
+{
+  return _newer->capacity();
+}
+
 void ResizableHashTable::clear()
 {
   _newer->clear();
@@ -103,13 +108,13 @@ void ResizableHashTable::triggerRehashing()
   _older = std::move(_newer);
   _migratePos = 0;
 
-  _newer = std::make_unique<HashTable>(_older->_slots.size() << 1); // double the size
+  _newer = std::make_unique<HashTable>(_older->capacity() << 1); // double the size
   tryRehashing();
 }
 
 bool ResizableHashTable::isRehashing() const
 {
-  return _older != nullptr && _migratePos < _older->_slots.size();
+  return _older != nullptr && _migratePos < _older->capacity();
 }
 
 void ResizableHashTable::migrateKeys()
@@ -120,10 +125,10 @@ void ResizableHashTable::migrateKeys()
   while (migrated < kRehashingWorkSize && _older->size() > 0)
   {
     // find a filled slot
-    while (_migratePos < _older->_slots.size() && _older->_slots[_migratePos] == nullptr)
+    while (_migratePos < _older->capacity() && _older->_slots[_migratePos] == nullptr)
       _migratePos++;
 
-    if (_migratePos >= _older->_slots.size())
+    if (_migratePos >= _older->capacity())
       break;
 
     HashTable::Entry *entry = _older->_slots[_migratePos];

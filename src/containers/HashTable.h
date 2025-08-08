@@ -17,6 +17,7 @@ public:
   void set(const std::string &key, std::string value) override;
   bool del(const std::string &key) override;
   size_t size() const override;
+  size_t capacity() const override;
   void clear() override;
 
 private:
@@ -28,7 +29,7 @@ private:
     Entry *next;
   };
 
-  std::vector<Entry *> _slots;
+  Entry **_slots;
   size_t _mask;
   size_t _size;
 

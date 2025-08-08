@@ -8,12 +8,16 @@
 HashTable::HashTable(size_t slotsCount) : _slots(), _mask(slotsCount - 1), _size(0)
 {
   assert(slotsCount > 0 && (slotsCount & _mask) == 0 && "slotsCount must be a power of two");
-  _slots.assign(slotsCount, nullptr);
+
+  // usage of calloc instead of new or malloc is to avoid the O(N) initialization cost
+  // by progressively initializing it instead
+  _slots = (Entry **)calloc(slotsCount, sizeof(Entry *));
 }
 
 HashTable::~HashTable()
 {
   clear();
+  free(_slots);
 }
 
 bool HashTable::get(const std::string &key, std::string &out)
@@ -91,16 +95,23 @@ size_t HashTable::size() const
   return _size;
 }
 
+size_t HashTable::capacity() const
+{
+  return _mask + 1; // since _mask is slotsCount - 1
+}
+
 void HashTable::clear()
 {
-  for (Entry *&head : _slots)
+  for (size_t i = 0; i <= _mask; ++i)
   {
-    while (head)
+    Entry *e = _slots[i];
+    while (e)
     {
-      Entry *next = head->next;
-      delete head;
-      head = next;
+      Entry *next = e->next;
+      delete e;
+      e = next;
     }
+    _slots[i] = nullptr;
   }
 
   _size = 0;
