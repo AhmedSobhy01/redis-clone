@@ -16,12 +16,15 @@ public:
   void removeConnection(int fd);
   void cleanupConnections(std::chrono::seconds timeout);
 
-  std::vector<Connection *> getActiveConnections();
+  const std::vector<Connection *> &getActiveConnections();
   Connection *getConnection(int fd);
 
 private:
   std::vector<std::unique_ptr<Connection>> _connections;
   size_t _activeConnections;
+
+  std::vector<Connection *> _activeConnectionsCache;
+  bool _cacheValid;
 
   size_t getSystemMaxFD() const;
 };

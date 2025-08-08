@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <sys/resource.h>
 
-ConnectionManager::ConnectionManager() : _activeConnections(0)
+ConnectionManager::ConnectionManager() : _activeConnections(0), _cacheValid(false)
 {
   _connections.reserve(getSystemMaxFD());
 }
@@ -25,6 +25,7 @@ void ConnectionManager::addConnection(int fd)
   _connections[fd] = std::move(conn);
   _connections[fd]->setWantRead(true);
   _activeConnections++;
+  _cacheValid = false;
 }
 
 void ConnectionManager::removeConnection(int fd)
@@ -34,12 +35,14 @@ void ConnectionManager::removeConnection(int fd)
     ::close(_connections[fd]->fd());
     _connections[fd].reset();
     _activeConnections--;
+    _cacheValid = false;
   }
 }
 
 void ConnectionManager::cleanupConnections(std::chrono::seconds timeout)
 {
   auto now = std::chrono::steady_clock::now();
+  bool change = false;
 
   for (std::unique_ptr<Connection> &conn : _connections)
   {
@@ -49,20 +52,29 @@ void ConnectionManager::cleanupConnections(std::chrono::seconds timeout)
       ::close(fd);
       conn.reset();
       _activeConnections--;
+      change = true;
     }
   }
+
+  if (change)
+    _cacheValid = false;
 }
 
-std::vector<Connection *> ConnectionManager::getActiveConnections()
+const std::vector<Connection *> &ConnectionManager::getActiveConnections()
 {
-  std::vector<Connection *> active;
-  active.reserve(_activeConnections);
+  if (!_cacheValid)
+  {
+    _activeConnectionsCache.clear();
+    _activeConnectionsCache.reserve(_activeConnections);
 
-  for (std::unique_ptr<Connection> &conn : _connections)
-    if (conn && !conn->isClosed())
-      active.push_back(conn.get());
+    for (std::unique_ptr<Connection> &conn : _connections)
+      if (conn && !conn->isClosed())
+        _activeConnectionsCache.push_back(conn.get());
 
-  return active;
+    _cacheValid = true;
+  }
+
+  return _activeConnectionsCache;
 }
 
 Connection *ConnectionManager::getConnection(int fd)

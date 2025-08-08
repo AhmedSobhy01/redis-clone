@@ -20,19 +20,18 @@ void EventLoop::poll()
   if (!_running)
     return;
 
-  std::vector<struct pollfd> tmp;
-  tmp.clear();
-
   // listener
   struct pollfd listenerFD;
   listenerFD.fd = _listener->fd();
   listenerFD.events = POLLIN;
   listenerFD.revents = 0;
-  tmp.push_back(listenerFD);
 
   // connections
-  std::vector<Connection *> conns = _connectionManager.getActiveConnections();
-  tmp.reserve(conns.size() + 1);
+  const std::vector<Connection *> &conns = _connectionManager.getActiveConnections();
+
+  std::vector<struct pollfd> tmp(conns.size() + 1);
+  size_t i = 0;
+  tmp[i++] = listenerFD;
 
   for (Connection *conn : conns)
   {
@@ -50,7 +49,7 @@ void EventLoop::poll()
     if (conn->wantsWrite())
       pfd.events |= POLLOUT;
 
-    tmp.push_back(pfd);
+    tmp[i++] = pfd;
   }
 
   if (tmp.empty())
