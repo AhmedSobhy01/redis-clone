@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <cctype>
 
 std::unique_ptr<Request> ProtocolHelper::parseRequest(ByteBuffer &buf)
 {
@@ -43,6 +44,11 @@ std::unique_ptr<Request> ProtocolHelper::parseRequest(ByteBuffer &buf)
     p += len;
   }
   buf.consume(4 + msglen);
+
+  // lower case first argument (command name) to be case insensitive
+  if (req->args.size() > 0)
+    for (char &c : req->args[0])
+      c = std::tolower(c);
 
   return req;
 }
