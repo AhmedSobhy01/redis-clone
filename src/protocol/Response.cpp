@@ -18,7 +18,7 @@ Response Response::nil()
 Response Response::str(const std::string &value)
 {
   std::vector<uint8_t> data;
-  uint32_t len = static_cast<uint32_t>(value.size());
+  uint32_t len = (uint32_t)value.size();
 
   // string length
   data.resize(4);
@@ -47,7 +47,7 @@ Response Response::error(uint32_t code, const std::string &message)
   std::memcpy(data.data(), &code, 4);
 
   // error message length
-  uint32_t len = static_cast<uint32_t>(message.size());
+  uint32_t len = (uint32_t)message.size();
   data.resize(8);
   std::memcpy(data.data() + 4, &len, 4);
 
@@ -57,28 +57,16 @@ Response Response::error(uint32_t code, const std::string &message)
   return Response(ResponseTag::TAG_ERR, data);
 }
 
-Response Response::array(uint32_t count)
+Response Response::array(const std::vector<Response> &elements)
 {
+  // array length
   std::vector<uint8_t> data(4);
+  uint32_t count = (uint32_t)elements.size();
   std::memcpy(data.data(), &count, 4);
 
-  return Response(ResponseTag::TAG_ARR, data);
-}
-
-Response Response::array(const std::vector<std::string> &elements)
-{
-  std::vector<uint8_t> data(4);
-  uint32_t count = static_cast<uint32_t>(elements.size());
-  std::memcpy(data.data(), &count, 4);
-
-  // serialize array elements
-  for (const std::string &element : elements)
-  {
-    uint32_t strLen = static_cast<uint32_t>(element.size());
-    data.resize(data.size() + 4 + strLen);
-    std::memcpy(data.data() + data.size() - 4 - strLen, &strLen, 4);
-    std::memcpy(data.data() + data.size() - strLen, element.data(), strLen);
-  }
+  // serialize each element
+  for (const Response &element : elements)
+    element.appendToBuffer(data);
 
   return Response(ResponseTag::TAG_ARR, data);
 }

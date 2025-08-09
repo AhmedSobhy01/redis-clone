@@ -27,8 +27,7 @@ public:
   static Response str(const std::string &value);
   static Response integer(int64_t value);
   static Response error(uint32_t code, const std::string &message);
-  static Response array(uint32_t count);
-  static Response array(const std::vector<std::string> &elements);
+  static Response array(const std::vector<Response> &elements);
 
   void appendToBuffer(std::vector<uint8_t> &buffer) const;
 
