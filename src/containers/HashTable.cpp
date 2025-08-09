@@ -117,6 +117,23 @@ void HashTable::clear()
   _size = 0;
 }
 
+std::vector<std::string> HashTable::keys()
+{
+  std::vector<std::string> keys;
+
+  for (size_t i = 0; i <= _mask; i++)
+  {
+    Entry *e = _slots[i];
+    while (e)
+    {
+      keys.push_back(e->key);
+      e = e->next;
+    }
+  }
+
+  return keys;
+}
+
 uint64_t HashTable::hashKey(const std::string &key) const
 {
   // FNV-1a hash function

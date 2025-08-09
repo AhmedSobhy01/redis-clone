@@ -87,6 +87,24 @@ void ResizableHashTable::clear()
   _migratePos = 0;
 }
 
+std::vector<std::string> ResizableHashTable::keys()
+{
+  std::vector<std::string> keys;
+
+  // new table
+  std::vector<std::string> newKeys = _newer->keys();
+  keys.insert(keys.end(), newKeys.begin(), newKeys.end());
+
+  // old table
+  if (isRehashing())
+  {
+    std::vector<std::string> oldKeys = _older->keys();
+    keys.insert(keys.end(), oldKeys.begin(), oldKeys.end());
+  }
+
+  return keys;
+}
+
 void ResizableHashTable::tryRehashing()
 {
   assert(isRehashing() && "Not rehashing, cannot migrate keys");

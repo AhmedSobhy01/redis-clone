@@ -19,6 +19,7 @@ public:
   size_t size() const override;
   size_t capacity() const override;
   void clear() override;
+  std::vector<std::string> keys() override;
 
 private:
   struct Entry
