@@ -42,3 +42,4 @@ $(OBJDIR)/command/CommandFactory.o: $(SRCDIR)/command/CommandFactory.cpp $(SRCDI
 $(OBJDIR)/command/GetCommand.o: $(SRCDIR)/command/GetCommand.cpp $(SRCDIR)/command/GetCommand.h $(SRCDIR)/command/Command.h
 $(OBJDIR)/command/SetCommand.o: $(SRCDIR)/command/SetCommand.cpp $(SRCDIR)/command/SetCommand.h $(SRCDIR)/command/Command.h
 $(OBJDIR)/command/DelCommand.o: $(SRCDIR)/command/DelCommand.cpp $(SRCDIR)/command/DelCommand.h $(SRCDIR)/command/Command.h
+$(OBJDIR)/containers/avl.o: $(SRCDIR)/containers/avl.cpp $(SRCDIR)/containers/avl.h
