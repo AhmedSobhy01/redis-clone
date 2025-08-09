@@ -42,6 +42,9 @@ void Server::run()
       // check for timeouts or closed connections
       _connectionManager->cleanupConnection(conn, kConnectionTimeout);
     }
+
+    // remove expired keys
+    TTLManager::instance().removeExpired(_database.get());
   }
 }
 

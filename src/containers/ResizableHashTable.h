@@ -21,6 +21,7 @@ public:
   size_t capacity() const override;
   void clear() override;
   std::vector<std::string> keys() override;
+  HashTable::Entry *findEntry(const std::string &key);
 
 private:
   std::unique_ptr<HashTable> _newer;

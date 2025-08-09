@@ -13,6 +13,15 @@ class Value;
 class HashTable : public IDatabase
 {
 public:
+  struct Entry
+  {
+    uint64_t hashCode;
+    std::string key;
+    std::shared_ptr<Value> val;
+    Entry *next;
+    size_t ttlHeapIndex;
+  };
+
   HashTable(size_t initial_slots = 16);
   ~HashTable();
 
@@ -23,16 +32,9 @@ public:
   size_t capacity() const override;
   void clear() override;
   std::vector<std::string> keys() override;
+  Entry *findEntry(const std::string &key);
 
 private:
-  struct Entry
-  {
-    uint64_t hashCode;
-    std::string key;
-    std::shared_ptr<Value> val;
-    Entry *next;
-  };
-
   Entry **_slots;
   size_t _mask;
   size_t _size;

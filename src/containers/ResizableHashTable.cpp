@@ -109,6 +109,17 @@ std::vector<std::string> ResizableHashTable::keys()
   return keys;
 }
 
+HashTable::Entry *ResizableHashTable::findEntry(const std::string &key)
+{
+  if (HashTable::Entry *e = _newer->findEntry(key))
+    return e;
+
+  if (isRehashing())
+    return _older->findEntry(key);
+
+  return nullptr;
+}
+
 void ResizableHashTable::tryRehashing()
 {
   assert(isRehashing() && "Not rehashing, cannot migrate keys");

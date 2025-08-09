@@ -7,6 +7,8 @@
 #include "command/ZRemCommand.h"
 #include "command/ZScoreCommand.h"
 #include "command/ZQueryCommand.h"
+#include "command/PTTLCommand.h"
+#include "command/PExpireCommand.h"
 
 std::unique_ptr<Command> CommandFactory::create(const Request &req)
 {
@@ -31,6 +33,10 @@ std::unique_ptr<Command> CommandFactory::create(const Request &req)
     return std::make_unique<ZScoreCommand>();
   else if (cmd == "zquery")
     return std::make_unique<ZQueryCommand>();
+  else if (cmd == "pttl")
+    return std::make_unique<PTTLCommand>();
+  else if (cmd == "pexpire")
+    return std::make_unique<PExpireCommand>();
 
   return nullptr;
 }

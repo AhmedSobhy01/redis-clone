@@ -1,4 +1,6 @@
 #include "command/DelCommand.h"
+#include "containers/HashTable.h"
+#include "server/TTLManager.h"
 
 Response DelCommand::execute(IDatabase *db, const std::vector<std::string> &args)
 {
@@ -7,6 +9,9 @@ Response DelCommand::execute(IDatabase *db, const std::vector<std::string> &args
 
   const std::string &key = args[1];
   bool deleted = db->del(key);
+
+  if (deleted)
+    TTLManager::instance().removeByKey(key);
 
   return Response::integer(deleted ? 1 : 0);
 }

@@ -55,7 +55,7 @@ void HashTable::set(const std::string &key, std::shared_ptr<Value> value)
     e = e->next;
   }
 
-  _slots[idx] = new Entry{h, key, value, _slots[idx]};
+  _slots[idx] = new Entry{h, key, value, _slots[idx], (size_t)-1};
   _size++;
 }
 
@@ -147,4 +147,19 @@ uint64_t HashTable::hashKey(const std::string &key) const
   }
 
   return hash;
+}
+
+HashTable::Entry *HashTable::findEntry(const std::string &key)
+{
+  uint64_t h = hashKey(key);
+  size_t idx = h & _mask;
+  Entry *e = _slots[idx];
+  while (e)
+  {
+    if (e->hashCode == h && e->key == key)
+      return e;
+    e = e->next;
+  }
+
+  return nullptr;
 }
