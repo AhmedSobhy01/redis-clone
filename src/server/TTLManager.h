@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <cstdint>
 
+const size_t kMaxExpiresWork = 2000;
+
 class TTLManager
 {
 public:

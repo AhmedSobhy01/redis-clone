@@ -35,7 +35,9 @@ void TTLManager::removeByKey(const std::string &key)
 
 void TTLManager::removeExpired(IDatabase *db)
 {
-  while (!_heap.empty())
+  size_t workCount = 0;
+
+  while (!_heap.empty() && workCount < kMaxExpiresWork)
   {
     HeapEntry *top = _heap.top();
     if (top->expiresAt > std::chrono::steady_clock::now())
@@ -51,5 +53,7 @@ void TTLManager::removeExpired(IDatabase *db)
     }
 
     delete top;
+
+    workCount++;
   }
 }
