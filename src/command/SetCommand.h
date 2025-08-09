@@ -2,13 +2,11 @@
 
 #include "command/Command.h"
 
+#include <string>
+#include <vector>
+
 class SetCommand : public Command
 {
 public:
-  SetCommand(const std::string &key, const std::string &value);
-  Response execute(IDatabase &db) override;
-
-private:
-  std::string _key;
-  std::string _value;
+  Response execute(IDatabase *db, const std::vector<std::string> &args) override;
 };

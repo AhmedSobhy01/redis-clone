@@ -14,8 +14,8 @@ public:
   ResizableHashTable(size_t initialSlots = 16);
   ~ResizableHashTable();
 
-  bool get(const std::string &key, std::string &out) override;
-  void set(const std::string &key, std::string value) override;
+  std::shared_ptr<Value> get(const std::string &key) override;
+  void set(const std::string &key, std::shared_ptr<Value> value) override;
   bool del(const std::string &key) override;
   size_t size() const override;
   size_t capacity() const override;

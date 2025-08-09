@@ -3,13 +3,10 @@
 #include "command/Command.h"
 
 #include <string>
+#include <vector>
 
 class DelCommand : public Command
 {
 public:
-  DelCommand(const std::string &key);
-  Response execute(IDatabase &db) override;
-
-private:
-  std::string _key;
+  Response execute(IDatabase *db, const std::vector<std::string> &args) override;
 };

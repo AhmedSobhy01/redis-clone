@@ -1,11 +1,12 @@
 #include "command/DelCommand.h"
 
-DelCommand::DelCommand(const std::string &key) : _key(key)
+Response DelCommand::execute(IDatabase *db, const std::vector<std::string> &args)
 {
-}
+  if (args.size() != 2)
+    return Response::error((uint32_t)ErrorCode::ERR_WRONG_ARGS_COUNT, "wrong number of arguments for 'del' command");
 
-Response DelCommand::execute(IDatabase &db)
-{
-  bool deleted = db.del(_key);
+  const std::string &key = args[1];
+  bool deleted = db->del(key);
+
   return Response::integer(deleted ? 1 : 0);
 }

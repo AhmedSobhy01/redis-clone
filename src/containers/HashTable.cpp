@@ -1,4 +1,5 @@
 #include "containers/HashTable.h"
+#include "containers/Value.h"
 
 #include <cassert>
 #include <cstdint>
@@ -20,7 +21,7 @@ HashTable::~HashTable()
   free(_slots);
 }
 
-bool HashTable::get(const std::string &key, std::string &out)
+std::shared_ptr<Value> HashTable::get(const std::string &key)
 {
   uint64_t h = hashKey(key);
   size_t idx = h & _mask;
@@ -29,18 +30,15 @@ bool HashTable::get(const std::string &key, std::string &out)
   while (e)
   {
     if (e->hashCode == h && e->key == key)
-    {
-      out = e->val;
-      return true;
-    }
+      return e->val;
 
     e = e->next;
   }
 
-  return false;
+  return nullptr;
 }
 
-void HashTable::set(const std::string &key, std::string value)
+void HashTable::set(const std::string &key, std::shared_ptr<Value> value)
 {
   uint64_t h = hashKey(key);
   size_t idx = h & _mask;
@@ -50,14 +48,14 @@ void HashTable::set(const std::string &key, std::string value)
   {
     if (e->hashCode == h && e->key == key)
     {
-      e->val = std::move(value);
+      e->val = value;
       return;
     }
 
     e = e->next;
   }
 
-  _slots[idx] = new Entry{h, key, std::move(value), _slots[idx]};
+  _slots[idx] = new Entry{h, key, value, _slots[idx]};
   _size++;
 }
 
@@ -102,7 +100,7 @@ size_t HashTable::capacity() const
 
 void HashTable::clear()
 {
-  for (size_t i = 0; i <= _mask; ++i)
+  for (size_t i = 0; i <= _mask; i++)
   {
     Entry *e = _slots[i];
     while (e)

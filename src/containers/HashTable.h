@@ -6,6 +6,9 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <memory>
+
+class Value;
 
 class HashTable : public IDatabase
 {
@@ -13,8 +16,8 @@ public:
   HashTable(size_t initial_slots = 16);
   ~HashTable();
 
-  bool get(const std::string &key, std::string &out) override;
-  void set(const std::string &key, std::string value) override;
+  std::shared_ptr<Value> get(const std::string &key) override;
+  void set(const std::string &key, std::shared_ptr<Value> value) override;
   bool del(const std::string &key) override;
   size_t size() const override;
   size_t capacity() const override;
@@ -26,7 +29,7 @@ private:
   {
     uint64_t hashCode;
     std::string key;
-    std::string val;
+    std::shared_ptr<Value> val;
     Entry *next;
   };
 

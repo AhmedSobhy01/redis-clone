@@ -24,7 +24,7 @@ void RequestProcessor::processRequests(Connection *conn)
       // run command
       std::unique_ptr<Command> command = CommandFactory::create(*request);
       Response response = command
-                              ? command->execute(_db)
+                              ? command->execute(&_db, request->args)
                               : Response::error((uint32_t)ErrorCode::ERR_UNKNOWN, "unknown command");
 
       // queue response

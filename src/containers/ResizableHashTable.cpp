@@ -12,26 +12,30 @@ ResizableHashTable::~ResizableHashTable()
 {
 }
 
-bool ResizableHashTable::get(const std::string &key, std::string &out)
+std::shared_ptr<Value> ResizableHashTable::get(const std::string &key)
 {
   // check new table first
-  if (_newer->get(key, out))
-    return true;
+  if (std::shared_ptr<Value> result = _newer->get(key))
+  {
+    if (isRehashing())
+      tryRehashing();
+    return result;
+  }
 
   // check old table if still rehashing
   if (isRehashing())
   {
-    bool result = _older->get(key, out);
+    std::shared_ptr<Value> result = _older->get(key);
     tryRehashing();
     return result;
   }
 
-  return false;
+  return nullptr;
 }
 
-void ResizableHashTable::set(const std::string &key, std::string value)
+void ResizableHashTable::set(const std::string &key, std::shared_ptr<Value> value)
 {
-  _newer->set(key, std::move(value));
+  _newer->set(key, value);
 
   // delete from old table
   if (isRehashing())
@@ -157,7 +161,7 @@ void ResizableHashTable::migrateKeys()
     entry->next = nullptr;
     _older->_size--;
 
-    // insert into the new table
+    // insert into the new table (no need to change ref count - just moving ownership)
     size_t idx = entry->hashCode & _newer->_mask;
     entry->next = _newer->_slots[idx];
     _newer->_slots[idx] = entry;

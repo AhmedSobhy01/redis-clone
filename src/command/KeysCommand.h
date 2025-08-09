@@ -2,9 +2,11 @@
 
 #include "command/Command.h"
 
+#include <vector>
+#include <string>
+
 class KeysCommand : public Command
 {
 public:
-  KeysCommand();
-  Response execute(IDatabase &db) override;
+  Response execute(IDatabase *db, const std::vector<std::string> &args) override;
 };

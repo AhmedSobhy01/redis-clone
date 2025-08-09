@@ -16,8 +16,9 @@ enum class ResponseTag : uint32_t
 
 enum class ErrorCode : uint32_t
 {
-  ERR_UNKNOWN = 1, // unknown command
-  ERR_TOO_BIG = 2, // response too big
+  ERR_UNKNOWN = 1,          // unknown command
+  ERR_TOO_BIG = 2,          // response too big
+  ERR_WRONG_ARGS_COUNT = 3, // wrong number of arguments
 };
 
 class Response
