@@ -11,13 +11,13 @@ std::unique_ptr<Command> CommandFactory::create(const Request &req)
 
   const std::string &cmd = req.args[0];
 
-  if (cmd == "get" && req.args.size() == 2)
+  if (cmd == "get")
     return std::make_unique<GetCommand>();
-  else if (cmd == "set" && req.args.size() == 3)
+  else if (cmd == "set")
     return std::make_unique<SetCommand>();
-  else if (cmd == "del" && req.args.size() == 2)
+  else if (cmd == "del")
     return std::make_unique<DelCommand>();
-  else if (cmd == "keys" && req.args.size() == 1)
+  else if (cmd == "keys")
     return std::make_unique<KeysCommand>();
 
   return nullptr;
