@@ -29,7 +29,7 @@ clean:
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/server/Server.h $(SRCDIR)/containers/ResizableHashTable.h
 $(OBJDIR)/server/Server.o: $(SRCDIR)/server/Server.cpp $(SRCDIR)/server/Server.h $(SRCDIR)/network/EventLoop.h $(SRCDIR)/network/ConnectionManager.h $(SRCDIR)/containers/IDatabase.h $(SRCDIR)/server/RequestProcessor.h
 $(OBJDIR)/server/RequestProcessor.o: $(SRCDIR)/server/RequestProcessor.cpp $(SRCDIR)/server/RequestProcessor.h $(SRCDIR)/containers/IDatabase.h $(SRCDIR)/network/Connection.h $(SRCDIR)/protocol/ProtocolHelper.h $(SRCDIR)/command/CommandFactory.h
-$(OBJDIR)/containers/ResizableHashTable.o: $(SRCDIR)/containers/ResizableHashTable.cpp $(SRCDIR)/containers/ResizableHashTable.h $(SRCDIR)/containers/HashTable.h $(SRCDIR)/containers/IDatabase.h $(SRCDIR)/containers/Value.h $(SRCDIR)/containers/AVL.h
+$(OBJDIR)/containers/ResizableHashTable.o: $(SRCDIR)/containers/ResizableHashTable.cpp $(SRCDIR)/containers/ResizableHashTable.h $(SRCDIR)/containers/HashTable.h $(SRCDIR)/containers/IDatabase.h $(SRCDIR)/containers/Value.h $(SRCDIR)/containers/AVLTree.h
 $(OBJDIR)/containers/HashTable.o: $(SRCDIR)/containers/HashTable.cpp $(SRCDIR)/containers/HashTable.h $(SRCDIR)/containers/IDatabase.h $(SRCDIR)/containers/Value.h
 $(OBJDIR)/containers/Value.o: $(SRCDIR)/containers/Value.cpp $(SRCDIR)/containers/Value.h
 $(OBJDIR)/network/EventLoop.o: $(SRCDIR)/network/EventLoop.cpp $(SRCDIR)/network/EventLoop.h $(SRCDIR)/network/ConnectionManager.h $(SRCDIR)/network/Listener.h
@@ -44,4 +44,5 @@ $(OBJDIR)/command/GetCommand.o: $(SRCDIR)/command/GetCommand.cpp $(SRCDIR)/comma
 $(OBJDIR)/command/SetCommand.o: $(SRCDIR)/command/SetCommand.cpp $(SRCDIR)/command/SetCommand.h $(SRCDIR)/command/Command.h $(SRCDIR)/containers/Value.h
 $(OBJDIR)/command/DelCommand.o: $(SRCDIR)/command/DelCommand.cpp $(SRCDIR)/command/DelCommand.h $(SRCDIR)/command/Command.h
 $(OBJDIR)/command/KeysCommand.o: $(SRCDIR)/command/KeysCommand.cpp $(SRCDIR)/command/KeysCommand.h $(SRCDIR)/command/Command.h
-$(OBJDIR)/containers/AVL.o: $(SRCDIR)/containers/AVL.cpp $(SRCDIR)/containers/AVL.h
+$(OBJDIR)/containers/AVLTree.o: $(SRCDIR)/containers/AVLTree.cpp $(SRCDIR)/containers/AVLTree.h $(SRCDIR)/containers/AVLNode.h $(SRCDIR)/containers/Value.h
+$(OBJDIR)/containers/AVLNode.o: $(SRCDIR)/containers/AVLNode.cpp $(SRCDIR)/containers/AVLNode.h $(SRCDIR)/containers/Value.h

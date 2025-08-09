@@ -1,13 +1,18 @@
-#include "containers/AVL.h"
-#include <cassert>
+#include "containers/AVLNode.h"
 
-AVLNode::AVLNode() : _parent(nullptr), _left(nullptr), _right(nullptr), _height(1), _count(1)
+AVLNode::AVLNode(std::shared_ptr<Value> value) : _parent(nullptr), _left(nullptr), _right(nullptr), _height(1), _count(1), val(std::move(value))
 {
+}
+
+AVLNode::~AVLNode()
+{
+  delete _left;
+  delete _right;
 }
 
 void AVLNode::update()
 {
-  _height = 1 + max(getHeight(_left), getHeight(_right));
+  _height = 1 + std::max(getHeight(_left), getHeight(_right));
   _count = 1 + getCount(_left) + getCount(_right);
 }
 
