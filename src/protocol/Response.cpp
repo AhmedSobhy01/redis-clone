@@ -38,6 +38,14 @@ Response Response::integer(int64_t value)
   return Response(ResponseTag::TAG_INT, data);
 }
 
+Response Response::dbl(double value)
+{
+  std::vector<uint8_t> data(8);
+  std::memcpy(data.data(), &value, 8);
+
+  return Response(ResponseTag::TAG_DBL, data);
+}
+
 Response Response::error(uint32_t code, const std::string &message)
 {
   std::vector<uint8_t> data;

@@ -9,7 +9,6 @@ private:
 
 public:
   StringValue(const std::string &value) : _value(value) {}
-  StringValue(std::string &&value) : _value(std::move(value)) {}
 
   const std::string &getValue() const { return _value; }
   void setValue(const std::string &value) { _value = value; }

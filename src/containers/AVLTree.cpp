@@ -76,67 +76,32 @@ bool AVLTree::remove(const std::shared_ptr<Value> &value)
     return false;
 
   _root = node->remove();
+
+  node->_left = nullptr;
+  node->_right = nullptr;
+  node->_parent = nullptr;
+
   delete node;
 
   return true;
 }
 
-AVLNode *AVLTree::findByIndex(uint32_t index) const
+AVLNode *AVLTree::lowerBound(const std::shared_ptr<Value> &value) const
 {
-  if (!_root || index >= _root->count())
-    return nullptr;
-
   AVLNode *current = _root;
+  AVLNode *result = nullptr;
   while (current)
   {
-    uint32_t leftCount = current->_left ? current->_left->count() : 0;
-
-    if (index == leftCount)
-      return current;
-    else if (index < leftCount)
-      current = current->_left;
+    if (*current->val < *value)
+      current = current->_right;
     else
     {
-      index -= leftCount + 1;
-      current = current->_right;
+      result = current;
+      current = current->_left;
     }
   }
 
-  return nullptr;
-}
-
-AVLNode *AVLTree::root() const
-{
-  return _root;
-}
-
-uint32_t AVLTree::size() const
-{
-  return _root ? _root->count() : 0;
-}
-
-AVLNode *AVLTree::first() const
-{
-  if (!_root)
-    return nullptr;
-
-  AVLNode *current = _root;
-  while (current->_left)
-    current = current->_left;
-
-  return current;
-}
-
-AVLNode *AVLTree::last() const
-{
-  if (!_root)
-    return nullptr;
-
-  AVLNode *current = _root;
-  while (current->_right)
-    current = current->_right;
-
-  return current;
+  return result;
 }
 
 AVLNode *AVLTree::next(AVLNode *node) const

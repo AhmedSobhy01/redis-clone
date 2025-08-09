@@ -27,6 +27,7 @@ public:
   static Response nil();
   static Response str(const std::string &value);
   static Response integer(int64_t value);
+  static Response dbl(double value);
   static Response error(uint32_t code, const std::string &message);
   static Response array(const std::vector<Response> &elements);
 

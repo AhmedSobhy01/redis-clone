@@ -46,3 +46,5 @@ $(OBJDIR)/command/DelCommand.o: $(SRCDIR)/command/DelCommand.cpp $(SRCDIR)/comma
 $(OBJDIR)/command/KeysCommand.o: $(SRCDIR)/command/KeysCommand.cpp $(SRCDIR)/command/KeysCommand.h $(SRCDIR)/command/Command.h
 $(OBJDIR)/containers/AVLTree.o: $(SRCDIR)/containers/AVLTree.cpp $(SRCDIR)/containers/AVLTree.h $(SRCDIR)/containers/AVLNode.h $(SRCDIR)/containers/Value.h
 $(OBJDIR)/containers/AVLNode.o: $(SRCDIR)/containers/AVLNode.cpp $(SRCDIR)/containers/AVLNode.h $(SRCDIR)/containers/Value.h
+$(OBJDIR)/containers/ZNodeValue.o: $(SRCDIR)/containers/ZNodeValue.cpp $(SRCDIR)/containers/ZNodeValue.h $(SRCDIR)/containers/Value.h
+$(OBJDIR)/utils/helpers.o: $(SRCDIR)/utils/helpers.cpp $(SRCDIR)/utils/helpers.h
