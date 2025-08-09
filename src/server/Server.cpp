@@ -35,16 +35,12 @@ void Server::run()
     const std::vector<Connection *> &activeConnections = _connectionManager->getActiveConnections();
 
     for (Connection *conn : activeConnections)
+    {
       if (conn && !conn->isClosed())
         _requestProcessor->processRequests(conn);
 
-    // close connections
-    auto now = std::chrono::steady_clock::now();
-
-    if (now - _lastCleanup > kCleanupInterval)
-    {
-      _connectionManager->cleanupConnections(kConnectionTimeout);
-      _lastCleanup = now;
+      // check for timeouts or closed connections
+      _connectionManager->cleanupConnection(conn, kConnectionTimeout);
     }
   }
 }

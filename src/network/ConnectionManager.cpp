@@ -41,23 +41,24 @@ void ConnectionManager::removeConnection(int fd)
 
 void ConnectionManager::cleanupConnections(std::chrono::seconds timeout)
 {
-  auto now = std::chrono::steady_clock::now();
-  bool change = false;
-
   for (std::unique_ptr<Connection> &conn : _connections)
+    cleanupConnection(conn.get(), timeout);
+}
+
+bool ConnectionManager::cleanupConnection(Connection *conn, std::chrono::seconds timeout)
+{
+  if (conn && (conn->isClosed() || conn->isTimedOut(std::chrono::steady_clock::now(), timeout)))
   {
-    if (conn && (conn->isClosed() || conn->isTimedOut(now, timeout)))
-    {
-      int fd = conn->fd();
-      ::close(fd);
-      conn.reset();
-      _activeConnections--;
-      change = true;
-    }
+    int fd = conn->fd();
+    ::close(fd);
+    _activeConnections--;
+    _connections[fd].reset();
+    _cacheValid = false;
+
+    return true;
   }
 
-  if (change)
-    _cacheValid = false;
+  return false;
 }
 
 const std::vector<Connection *> &ConnectionManager::getActiveConnections()

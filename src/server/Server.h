@@ -8,7 +8,6 @@
 #include <memory>
 #include <chrono>
 
-const std::chrono::seconds kCleanupInterval{30};
 const std::chrono::seconds kConnectionTimeout{300};
 
 class Server

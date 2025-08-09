@@ -14,7 +14,9 @@ public:
 
   void addConnection(int fd);
   void removeConnection(int fd);
+
   void cleanupConnections(std::chrono::seconds timeout);
+  bool cleanupConnection(Connection *conn, std::chrono::seconds timeout);
 
   const std::vector<Connection *> &getActiveConnections();
   Connection *getConnection(int fd);
