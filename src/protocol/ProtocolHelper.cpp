@@ -1,11 +1,12 @@
 #include "protocol/ProtocolHelper.h"
 
 #include <cstring>
-#include <sstream>
-#include <algorithm>
+#include <stdexcept>
 
 std::unique_ptr<Request> ProtocolHelper::parseRequest(ByteBuffer &buf)
 {
+  // nstr (4 bytes) | len (4 bytes) | str1 | len (4 bytes) | str2 | ... | len (4 bytes) | strn
+
   if (buf.size() < 4)
     return nullptr;
 
@@ -48,25 +49,28 @@ std::unique_ptr<Request> ProtocolHelper::parseRequest(ByteBuffer &buf)
 
 std::vector<uint8_t> ProtocolHelper::serialize(const Response &resp)
 {
-  // total length (4 bytes) | status (4 bytes) | payload
-  uint32_t total = 4 + static_cast<uint32_t>(resp.data.size());
+  std::vector<uint8_t> out;
 
-  if (total > kMaxMsg)
-    throw std::runtime_error("response too big");
+  // space for message length
+  uint32_t totalLen = 0;
+  out.resize(4);
+  std::memcpy(out.data(), &totalLen, 4);
 
-  std::vector<uint8_t> out(4 + total);
-  uint8_t *p = out.data();
+  resp.appendToBuffer(out);
 
-  // total length
-  std::memcpy(p, &total, 4);
-  p += 4;
+  // update message length
+  size_t msgSize = out.size() - 4;
 
-  // status code
-  std::memcpy(p, &resp.status, 4);
-  p += 4;
+  if (msgSize > kMaxMsg)
+  {
+    out.resize(4);
+    Response::error((uint32_t)ErrorCode::ERR_TOO_BIG, "response is too big.").appendToBuffer(out);
+    msgSize = out.size() - 4;
+  }
 
-  // payload data
-  std::memcpy(p, resp.data.data(), resp.data.size());
+  // update message length
+  uint32_t len = (uint32_t)msgSize;
+  std::memcpy(out.data(), &len, 4);
 
   return out;
 }

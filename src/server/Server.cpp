@@ -32,7 +32,7 @@ void Server::run()
     _eventLoop->poll();
 
     // processes requests
-    std::vector<Connection *> activeConnections = _connectionManager->getActiveConnections();
+    const std::vector<Connection *> &activeConnections = _connectionManager->getActiveConnections();
 
     for (Connection *conn : activeConnections)
       if (conn && !conn->isClosed())

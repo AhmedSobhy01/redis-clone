@@ -36,6 +36,7 @@ $(OBJDIR)/network/ConnectionManager.o: $(SRCDIR)/network/ConnectionManager.cpp $
 $(OBJDIR)/network/Connection.o: $(SRCDIR)/network/Connection.cpp $(SRCDIR)/network/Connection.h $(SRCDIR)/protocol/ByteBuffer.h
 $(OBJDIR)/network/Listener.o: $(SRCDIR)/network/Listener.cpp $(SRCDIR)/network/Listener.h $(SRCDIR)/network/ConnectionManager.h
 $(OBJDIR)/protocol/ProtocolHelper.o: $(SRCDIR)/protocol/ProtocolHelper.cpp $(SRCDIR)/protocol/ProtocolHelper.h $(SRCDIR)/protocol/ByteBuffer.h $(SRCDIR)/protocol/Request.h $(SRCDIR)/protocol/Response.h
+$(OBJDIR)/protocol/Response.o: $(SRCDIR)/protocol/Response.cpp $(SRCDIR)/protocol/Response.h
 $(OBJDIR)/protocol/ByteBuffer.o: $(SRCDIR)/protocol/ByteBuffer.cpp $(SRCDIR)/protocol/ByteBuffer.h
 $(OBJDIR)/command/CommandFactory.o: $(SRCDIR)/command/CommandFactory.cpp $(SRCDIR)/command/CommandFactory.h $(SRCDIR)/command/GetCommand.h $(SRCDIR)/command/SetCommand.h $(SRCDIR)/command/DelCommand.h
 $(OBJDIR)/command/GetCommand.o: $(SRCDIR)/command/GetCommand.cpp $(SRCDIR)/command/GetCommand.h $(SRCDIR)/command/Command.h

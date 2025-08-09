@@ -23,12 +23,9 @@ void RequestProcessor::processRequests(Connection *conn)
 
       // run command
       std::unique_ptr<Command> command = CommandFactory::create(*request);
-      Response response;
-
-      if (command)
-        response = command->execute(_db);
-      else
-        response.status = ResponseStatus::ERROR;
+      Response response = command
+                              ? command->execute(_db)
+                              : Response::error((uint32_t)ErrorCode::ERR_UNKNOWN, "unknown command");
 
       // queue response
       std::vector<uint8_t> res = _protocolHelper.serialize(response);
@@ -42,8 +39,7 @@ void RequestProcessor::processRequests(Connection *conn)
   {
     std::cerr << "Error: " << e.what() << std::endl;
 
-    Response response;
-    response.status = ResponseStatus::ERROR;
+    Response response = Response::error((uint32_t)ErrorCode::ERR_UNKNOWN, e.what());
 
     std::vector<uint8_t> res = _protocolHelper.serialize(response);
     conn->outBuffer().append(res.data(), res.size());

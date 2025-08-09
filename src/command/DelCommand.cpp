@@ -6,12 +6,6 @@ DelCommand::DelCommand(std::string key) : _key(std::move(key))
 
 Response DelCommand::execute(IDatabase &db)
 {
-  Response resp;
-
-  if (db.del(_key))
-    resp.status = ResponseStatus::OK;
-  else
-    resp.status = ResponseStatus::NOT_FOUND;
-
-  return resp;
+  bool deleted = db.del(_key);
+  return Response::integer(deleted ? 1 : 0);
 }
