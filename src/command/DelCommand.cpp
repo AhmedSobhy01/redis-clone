@@ -1,6 +1,6 @@
 #include "command/DelCommand.h"
 
-DelCommand::DelCommand(std::string key) : _key(std::move(key))
+DelCommand::DelCommand(const std::string &key) : _key(key)
 {
 }
 

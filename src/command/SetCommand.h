@@ -1,12 +1,11 @@
 #pragma once
 
 #include "command/Command.h"
-#include <string>
 
 class SetCommand : public Command
 {
 public:
-  SetCommand(std::string key, std::string value);
+  SetCommand(const std::string &key, const std::string &value);
   Response execute(IDatabase &db) override;
 
 private:

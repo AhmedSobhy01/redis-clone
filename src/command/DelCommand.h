@@ -7,7 +7,7 @@
 class DelCommand : public Command
 {
 public:
-  DelCommand(std::string key);
+  DelCommand(const std::string &key);
   Response execute(IDatabase &db) override;
 
 private:

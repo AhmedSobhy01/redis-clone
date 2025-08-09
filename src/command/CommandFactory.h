@@ -2,6 +2,7 @@
 
 #include "protocol/Request.h"
 #include "command/Command.h"
+
 #include <memory>
 
 class CommandFactory

@@ -6,5 +6,6 @@
 class Command
 {
 public:
+  virtual ~Command() = default;
   virtual Response execute(IDatabase &db) = 0;
 };

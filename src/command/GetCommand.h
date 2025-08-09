@@ -7,7 +7,7 @@
 class GetCommand : public Command
 {
 public:
-  GetCommand(std::string key);
+  GetCommand(const std::string &key);
   Response execute(IDatabase &db) override;
 
 private:

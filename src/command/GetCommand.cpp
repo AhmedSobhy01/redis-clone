@@ -1,6 +1,6 @@
 #include "command/GetCommand.h"
 
-GetCommand::GetCommand(std::string key) : _key(std::move(key))
+GetCommand::GetCommand(const std::string &key) : _key(key)
 {
 }
 

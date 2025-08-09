@@ -1,6 +1,6 @@
 #include "command/SetCommand.h"
 
-SetCommand::SetCommand(std::string key, std::string value) : _key(std::move(key)), _value(std::move(value))
+SetCommand::SetCommand(const std::string &key, const std::string &value) : _key(key), _value(value)
 {
 }
 
