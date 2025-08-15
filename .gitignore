@@ -10,3 +10,4 @@ build/
 CMakeCache.txt
 CMakeFiles/
 redis-clone
+client
