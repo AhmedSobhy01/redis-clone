@@ -13,17 +13,23 @@ INCLUDES = -I$(SRCDIR)
 
 .PHONY: all clean
 
-all: $(TARGET)
+all: $(TARGET) client
 
 $(TARGET): $(OBJECTS)
 	$(CXX) $(OBJECTS) -o $@
+
+client: client.o
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
+client.o: client.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 clean:
-	rm -rf $(OBJDIR) $(TARGET)
+	rm -rf $(OBJDIR) $(TARGET) client client.o
 
 # Dependencies
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/server/Server.h $(SRCDIR)/containers/ResizableHashTable.h

@@ -258,7 +258,7 @@ static int32_t read_res(int fd)
   return rv;
 }
 
-int main(int argc, char **argv)
+int main()
 {
   int fd = socket(AF_INET, SOCK_STREAM, 0);
   if (fd < 0)
