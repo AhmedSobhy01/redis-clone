@@ -1,17 +1,32 @@
 #include "network/EventLoop.h"
 
-#include <poll.h>
+#include <sys/epoll.h>
 #include <cerrno>
 #include <stdexcept>
 #include <vector>
+#include <unistd.h>
 
 EventLoop::EventLoop(const std::string &host, int port, ConnectionManager &connectionManager) : _connectionManager(connectionManager), _running(true)
 {
   _listener = std::make_unique<Listener>(host, port, _connectionManager);
+
+  _epoll_fd = ::epoll_create1(0);
+  if (_epoll_fd < 0)
+    throw std::runtime_error("epoll_create1 failed");
+
+  // add listener to epoll
+  struct epoll_event ev{};
+  ev.events = EPOLLIN;
+  ev.data.fd = _listener->fd();
+  if (::epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, _listener->fd(), &ev) < 0)
+    throw std::runtime_error("epoll_ctl add listener failed");
 }
 
 EventLoop::~EventLoop()
 {
+  if (_epoll_fd >= 0)
+    ::close(_epoll_fd);
+
   _listener.reset();
 }
 
@@ -20,66 +35,51 @@ void EventLoop::poll()
   if (!_running)
     return;
 
-  // listener
-  struct pollfd listenerFD;
-  listenerFD.fd = _listener->fd();
-  listenerFD.events = POLLIN;
-  listenerFD.revents = 0;
-
   // connections
   const std::vector<Connection *> &conns = _connectionManager.getActiveConnections();
-
-  std::vector<struct pollfd> tmp(conns.size() + 1);
-  size_t i = 0;
-  tmp[i++] = listenerFD;
-
   for (Connection *conn : conns)
   {
     if (!conn || conn->isClosed())
       continue;
 
-    struct pollfd pfd;
-    pfd.fd = conn->fd();
-    pfd.events = 0;
-    pfd.revents = 0;
+    struct epoll_event ev{};
+    ev.data.fd = conn->fd();
+    ev.events = EPOLLERR;
 
-    pfd.events = POLLERR;
     if (conn->wantsRead())
-      pfd.events |= POLLIN;
+      ev.events |= EPOLLIN;
     if (conn->wantsWrite())
-      pfd.events |= POLLOUT;
+      ev.events |= EPOLLOUT;
 
-    tmp[i++] = pfd;
+    // update in epoll
+    if (::epoll_ctl(_epoll_fd, EPOLL_CTL_MOD, conn->fd(), &ev) < 0)
+      if (errno == ENOENT && ::epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, conn->fd(), &ev) < 0)
+        continue;
   }
 
-  if (tmp.empty())
-    return;
+  struct epoll_event events[kMaxEvents];
 
-  // poll pfds with 100ms timeout
-  int n = ::poll(tmp.data(), tmp.size(), 100);
+  int n = ::epoll_wait(_epoll_fd, events, kMaxEvents, 100);
 
   if (n < 0 && errno == EINTR)
     return;
 
   if (n < 0)
-    throw std::runtime_error("poll failed");
+    throw std::runtime_error("epoll_wait failed");
 
   if (n == 0)
     return;
 
   // process events
-  for (size_t i = 0; i < tmp.size() && n > 0; i++)
+  for (int i = 0; i < n; i++)
   {
-    const pollfd &pfd = tmp[i];
-    if (pfd.revents == 0)
-      continue;
+    int fd = events[i].data.fd;
+    uint32_t ev = events[i].events;
 
-    if (i == 0) // listener
-      handleListenerEvents(pfd);
-    else // connection
-      handleConnectionEvents(pfd);
-
-    n--;
+    if (fd == _listener->fd())
+      handleListenerEvents(ev);
+    else
+      handleConnectionEvents(fd, ev);
   }
 }
 
@@ -93,24 +93,27 @@ bool EventLoop::isRunning() const
   return _running;
 }
 
-void EventLoop::handleListenerEvents(const struct pollfd &pfd)
+void EventLoop::handleListenerEvents(uint32_t events)
 {
-  if (pfd.revents & POLLIN)
+  if (events & EPOLLIN)
     _listener->onAccept();
 }
 
-void EventLoop::handleConnectionEvents(const struct pollfd &pfd)
+void EventLoop::handleConnectionEvents(int fd, uint32_t events)
 {
-  Connection *conn = _connectionManager.getConnection(pfd.fd);
+  Connection *conn = _connectionManager.getConnection(fd);
   if (!conn)
     return;
 
-  if (pfd.revents & POLLIN)
+  if (events & EPOLLIN)
     conn->handleRead();
 
-  if (pfd.revents & POLLOUT)
+  if (events & EPOLLOUT)
     conn->handleWrite();
 
-  if (pfd.revents & (POLLERR | POLLHUP))
+  if (events & (EPOLLERR | EPOLLHUP))
+  {
     conn->setWantClose(true);
+    ::epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, fd, nullptr);
+  }
 }

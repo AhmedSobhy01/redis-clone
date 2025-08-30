@@ -6,8 +6,9 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <sys/epoll.h>
 
-struct pollfd;
+constexpr int kMaxEvents = 128;
 
 class EventLoop
 {
@@ -23,7 +24,8 @@ private:
   std::unique_ptr<Listener> _listener;
   ConnectionManager &_connectionManager;
   bool _running;
+  int _epoll_fd;
 
-  void handleListenerEvents(const struct pollfd &pfd);
-  void handleConnectionEvents(const struct pollfd &pfd);
+  void handleListenerEvents(uint32_t events);
+  void handleConnectionEvents(int fd, uint32_t events);
 };

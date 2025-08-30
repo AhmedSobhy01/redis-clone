@@ -130,7 +130,7 @@ Hex representation in little-endian:
 ### Core Components
 
 -   **Server**: Main server implementation handling connections
--   **EventLoop**: Non-blocking I/O event loop using poll()
+-   **EventLoop**: Non-blocking I/O event loop using epoll()
 -   **ConnectionManager**: Manages client connections
 -   **RequestProcessor**: Processes incoming client requests
 -   **ProtocolHelper**: Handles the binary protocol encoding/decoding
@@ -152,7 +152,7 @@ Hex representation in little-endian:
 
 2. **Event Loop**:
 
-    - Non-blocking I/O multiplexer using `poll()`
+    - Non-blocking I/O multiplexer using `epoll()`
     - Efficiently handles multiple client connections concurrently
     - Event-based architecture that processes read/write events as they occur
     - Avoids thread-per-connection overhead while maintaining responsiveness
